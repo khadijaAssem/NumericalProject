@@ -98,23 +98,21 @@ class GUI :
             # print(X[i-1]+" "+Y[i-1])
 
         x = float((self.solve_for_x_entry).get())
+        window = Toplevel(root)
+        window.title("Newton")
+        window.geometry('500x500')
+        functionLabel = Label(window, text="Output function ").grid(row=0, column=1)
+        solveLabel = Label(window, text=("Output at X = " + str(x))).grid(row=1, column=1)
 
         if self.var.get() == 2:
-            l = Lagrange(x, y, t)
+            l = Lagrange.Lagrange(X,Y,x)
             l.lagrange()
-            value = Label(root, text=l.calc_value(t))
-            value.grid(row=5)
-            poly = Label(root, text=l.poly())
-            poly.grid(row=6)
+            outputLabel = Label(window, text=str(l.poly())).grid(row=0, column=3)
+            solveOutput = Label(window, text=(str(l.calc_value(x)))).grid(row=1, column=3)
             l.plot()
         if self.var.get() == 1 :
             n = Newton.Newton(X,Y,self.polynomiaOrder)
-            window = Toplevel(root)
-            window.title("Newton")
-            window.geometry('500x500')
-            functionLabel = Label(window, text="Output function ").grid(row=0,column = 1)
             outputLabel = Label(window, text=str(n.createFormula())).grid(row=0,column = 3)
-            solveLabel = Label(window, text=("Output at X = "+str(x))).grid(row=1, column=1)
             solveOutput = Label(window, text=(str(n.solve(x)))).grid(row=1, column=3)
 
 root = Tk()

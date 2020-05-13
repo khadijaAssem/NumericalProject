@@ -4,7 +4,7 @@ import numpy as np
 from PIL import ImageTk, Image
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-
+from Open_methods import FixedPoint, NewtonRaphson, Secant
 import Lagrange
 import Newton
 
@@ -13,14 +13,15 @@ class GUI:
     master = None
     part1 = None
     part2 = None
-
     polynomiaOrder = None
 
     def __init__(self, master):
+        self.v = IntVar()
         self.master = master
         master.title("Numerical Project")
-        master.geometry('500x500')
+        master.geometry('570x500')
         self.createTabs()
+        self.buildPart1()
         self.buildPart2()
 
     def createTabs(self):
@@ -39,6 +40,67 @@ class GUI:
         orLabel = Label(self.part2, text="Or").grid(column=3, row=0, padx=10, pady=10)
         read_button = Button(self.part2, width=20, height=1, text="Read data from file",
                              command=self.readFromFile).grid(row=0, column=4)
+
+    def buildPart1(self):
+        MODES = [
+            ("Bisection", 1),
+            ("False Position", 2),
+            ("Fixed Point", 3),
+            ("Newton Raphson", 4),
+            ("Secant", 5),
+        ]
+        i = 0
+        self.v.set(4)
+        for text, mode in MODES:
+            b = Radiobutton(self.part1, text=text,
+                            variable=self.v, value=mode, indicatoron=False,
+                            command=lambda: GUI.clicked(self, self.v.get())).grid(column=i, row=0, padx=10, pady=10)
+            i += 1
+
+    def clicked(self, value):
+        fxlabel = Label(self.part1, text="F(x)")
+        gxlabel = Label(self.part1, text="g(x)")
+        xilabel = Label(self.part1, text="Initial Approximation")
+        xprevlabel = Label(self.part1, text="Previous Approximation")
+        iterlabel = Label(self.part1, text="max iterations")
+        epsilonlabel = Label(self.part1, text="epsilon")
+
+        self.fEntry = Entry(self.part1, width=30)
+        self.xiEntry = Entry(self.part1, width=30)
+        self.xprevEntry = Entry(self.part1, width=30)
+        self.iterEntry = Entry(self.part1, width=30)
+        self.epsilonEntry = Entry(self.part1, width=30)
+
+        button = Button(self.part1, width=10, height=1, text="Solve", command=self.solveP2)
+        button.grid(column=2, row=7, padx=20, pady=20)
+
+        xprevlabel.grid(column=0, row=3, padx=10, pady=10)
+        xilabel.grid(column=0, row=4, padx=10, pady=10)
+        iterlabel.grid(column=0, row=5, padx=10, pady=10)
+        epsilonlabel.grid(column=0, row=6, padx=10, pady=10)
+
+        self.fEntry.grid(column=1, row=2, padx=10, pady=10)
+        self.xprevEntry.grid(column=1, row=3, padx=10, pady=10)
+        self.xiEntry.grid(column=1, row=4, padx=10, pady=10)
+        self.iterEntry.grid(column=1, row=5, padx=10, pady=10)
+        self.epsilonEntry.grid(column=1, row=6, padx=10, pady=10)
+
+        if self.v.get() == 1:
+            print(1)
+        elif self.v.get() == 2:
+            print(2)
+        elif self.v.get() == 3:
+            fxlabel.config(DISABLED)
+            self.xprevEntry.config(state='disabled')
+            gxlabel.grid(column=0, row=2, padx=10, pady=10)
+        elif self.v.get() == 4:
+            gxlabel.config(DISABLED)
+            self.xprevEntry.config(state='disabled')
+            fxlabel.grid(column=0, row=2, padx=10, pady=10)
+        elif self.v.get() == 5:
+            gxlabel.config(DISABLED)
+            self.xprevEntry.config(state='normal')
+            fxlabel.grid(column=0, row=2, padx=10, pady=10)
 
     def readInput(self, entry):
         self.polynomiaOrder = int(entry.widget.get())
@@ -114,59 +176,96 @@ class GUI:
             outputLabel = Label(window, text=str(l.poly())).grid(row=0, column=3)
             solveOutput = Label(window, text=(str(l.calc_value(T)))).grid(row=1, column=3)
 
-
         elif method.__contains__("Newton"):
             n = Newton.Newton(X, Y, len(X))
             outputLabel = Label(window, text=str(n.createFormula())).grid(row=0, column=3)
             solveOutput = Label(window, text=(str(n.solve(T)))).grid(row=1, column=3)
-        self.plot(X,l,n,method,window)
+        self.plot(X, l, n, method, window)
 
-    def plot(self,X,l,n,method,window):
+    def plot(self, X, l, n, method, window):
 
         values_y = []
-        values_x = np.linspace(X[0], X[len(X)-1], 10000)
+        values_x = np.linspace(X[0], X[len(X) - 1], 10000)
         for i in range(len(values_x)):
             if method.__contains__("Lagrange"):
-                values_y.append(l.calc_value(values_x[i]) )
+                values_y.append(l.calc_value(values_x[i]))
             else:
-                values_y.append(n.solve(values_x[i] ))
-            #values_x.append(X[0] + step * i)
+                values_y.append(n.solve(values_x[i]))
+            # values_x.append(X[0] + step * i)
         fig = Figure()
         fig.add_subplot(111).plot(values_x, values_y)
 
         canvas = FigureCanvasTkAgg(fig, master=window)
         canvas.draw()
-        canvas.get_tk_widget().grid(row=4,column=3)
+        canvas.get_tk_widget().grid(row=4, column=3)
 
     def solve(self):
-        X = [None] * (self.polynomiaOrder)
-        Y = [None] * (self.polynomiaOrder)
-        for i in range(1, self.polynomiaOrder + 1):
-            X[i - 1] = float((self.entryX[i - 1]).get())
-            Y[i - 1] = float((self.entryY[i - 1]).get())
-            # print(X[i-1]+" "+Y[i-1])
-
-        x = float((self.solve_for_x_entry).get())
         window = Toplevel(root)
         window.title("Newton")
         window.geometry('500x500')
         functionLabel = Label(window, text="Output function ").grid(row=0, column=1)
         solveLabel = Label(window, text=("Output at X = " + str(x))).grid(row=1, column=1)
-        l=None
-        n=None
+        l = None
+        n = None
         if self.var.get() == 2:
-            method="Lagrange"
+            method = "Lagrange"
             l = Lagrange.Lagrange(X, Y, x)
             l.lagrange()
             outputLabel = Label(window, text=str(l.poly())).grid(row=0, column=3)
             solveOutput = Label(window, text=(str(l.calc_value(x)))).grid(row=1, column=3)
 
         if self.var.get() == 1:
-            method="Newton"
+            method = "Newton"
             n = Newton.Newton(X, Y, self.polynomiaOrder)
             outputLabel = Label(window, text=str(n.createFormula())).grid(row=0, column=3)
             solveOutput = Label(window, text=(str(n.solve(x)))).grid(row=1, column=3)
-        self.plot(X,l,n,method,window)
+        self.plot(X, l, n, method, window)
+
+    def solveP2(self):
+        window = Toplevel(root)
+        window.title("Root Finder")
+        window.geometry('500x500')
+        iter = False
+        eps = False
+        if self.iterEntry.index("end") == 0:
+            iter = True
+        if self.epsilonEntry.index("end") == 0:
+            eps = True
+        if self.v.get() == 3:
+            method = "Fixed Point"
+            if iter and eps:
+                F = FixedPoint.FP(self.fEntry, self.xiEntry, None, None)
+            elif iter:
+                F = FixedPoint.FP(self.fEntry, self.xiEntry, None, self.epsilonEntry)
+            elif eps:
+                F = FixedPoint.FP(self.fEntry, self.xiEntry, self.iterEntry, None)
+            else:
+                F = FixedPoint.FP(self.fEntry, self.xiEntry, self.iterEntry, self.epsilonEntry)
+            F.solve()
+
+        elif self.v.get() == 4:
+            method = "Newton Raphson"
+            if iter and eps:
+                N = NewtonRaphson.NR(self.fEntry, self.xiEntry, None, None)
+            elif iter:
+                N = NewtonRaphson.NR(self.fEntry, self.xiEntry, None, self.epsilonEntry)
+            elif eps:
+                N = NewtonRaphson.NR(self.fEntry, self.xiEntry, self.iterEntry, None)
+            else:
+                N = NewtonRaphson.NR(self.fEntry, self.xiEntry, self.iterEntry, self.epsilonEntry)
+            N.solve()
+
+        elif self.v.get() == 5:
+            method = "Secant"
+            if iter and eps:
+                S = Secant.SC(self.fEntry, self.xprevEntry, self.xiEntry, None, None)
+            elif iter:
+                S = Secant.SC(self.fEntry, self.xprevEntry, self.xiEntry, None, self.epsilonEntry)
+            elif eps:
+                S = Secant.SC(self.fEntry, self.xprevEntry, self.xiEntry, self.iterEntry, None)
+            else:
+                S = Secant.SC(self.fEntry, self.xprevEntry, self.xiEntry, self.iterEntry, self.epsilonEntry)
+            S.solve()
 
 
 root = Tk()

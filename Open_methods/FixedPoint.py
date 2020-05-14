@@ -1,15 +1,15 @@
 import sympy
 import numpy
 import timeit
-
+import math
 
 class FP:
     def __init__(self, gx, xi, max_iterations, epsilon):
         self.iterations = []
-        self.ea = 0
-        self.xr = 0
+        self.ea = float(0)
+        self.xr = float(0)
         self.number_of_iterations = 0
-        self.xi = xi
+        self.xi = float(xi)
         self.gx = gx
         if max_iterations == 0:
             self.max_iterations = 50
@@ -33,13 +33,19 @@ class FP:
         X = eqn.free_symbols.pop()
 
         try:
+            diff = sympy.diff(eqn, X)
             value_eqn = sympy.lambdify(X, eqn)
+            value_diff = sympy.lambdify(X, diff)
         except ValueError:
             raise ValueError("Error! Invalid function.")
 
         count = 0
+        first = True
 
         while True:
+            if first and value_diff(self.xi) > 1:
+                first = False
+                raise ValueError("Oops! Error increase. So, it will diverge.")
             self.xr = value_eqn(self.xi)
             ea_prev = self.ea
             self.ea = abs((self.xr - self.xi) / self.xr) * 100
@@ -54,8 +60,6 @@ class FP:
 
             if ea_prev < self.ea:
                 count += 1
-                if count == 5:
-                    raise ValueError("Oops! Error increase. So, it will diverge.")
             if self.ea < self.epsilon or self.number_of_iterations > self.max_iterations:
                 break
 
@@ -65,7 +69,9 @@ class FP:
 
 
 x = sympy.Symbol('x')
-obj = FP((0.95 * x ** 3 - 5.9 * x ** 2 + 10.9 * x - 6), 3.5, 0, 0)
+#obj = FP(((2*x+3)**(1/2)), 4, 0, 0)
+#obj = FP((3/(x-2)), 4, 0, 0)
+obj = FP(((x**2-3)/2), 4, 0, 0)
 
 Result = obj.solve()
 print(Result[0])

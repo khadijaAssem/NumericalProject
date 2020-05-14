@@ -49,7 +49,7 @@ def solve(equation, xl, xu, max_iterations=50, epsilon=0.0001):
 
     return number_iterations, execution_time, iterations, xr, error, function
 
-def draw_plot(number_iterations, execution_time, iterations, xr, error, function):
+def draw_plot(iterations, function):
     iteration = iterations[0]
     xl = iteration['xl']
     xu = iteration['xu']
@@ -77,4 +77,4 @@ def draw_plot(number_iterations, execution_time, iterations, xr, error, function
 
 
 number_iterations, execution_time, iterations, xr, error, function = solve(x**3 - 2*x**2 + 1,-1, 0, 50, 0.0001)
-draw_plot(number_iterations, execution_time, iterations, xr, error, function)
+draw_plot(iterations, function)

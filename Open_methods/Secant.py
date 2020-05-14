@@ -12,11 +12,11 @@ class SC:
         self.x_prev = x_prev
         self.xi = xi
         self.fn = fn
-        if max_iterations is None:
+        if max_iterations == 0:
             self.max_iterations = 50
         else:
             self.max_iterations = max_iterations
-        if epsilon is None:
+        if epsilon == 0:
             self.epsilon = 0.0001
         else:
             self.epsilon = epsilon
@@ -60,14 +60,3 @@ class SC:
         execution_time = timeit.default_timer() - start_time
 
         return self.number_of_iterations, execution_time, self.iterations, self.xr, self.ea
-
-
-x = sympy.Symbol('x')
-obj = SC((sympy.cos(x) + 2*sympy.sin(x) + x**2), 0, -0.1, 100, 0.001)
-
-Result = obj.solve()
-print(Result[0])
-print(Result[1])
-print(*Result[2], sep=", ")
-print(Result[3])
-print(Result[4])

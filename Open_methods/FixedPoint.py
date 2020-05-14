@@ -11,11 +11,11 @@ class FP:
         self.number_of_iterations = 0
         self.xi = xi
         self.gx = gx
-        if max_iterations is None:
+        if max_iterations == 0:
             self.max_iterations = 50
         else:
             self.max_iterations = max_iterations
-        if epsilon is None:
+        if epsilon == 0:
             self.epsilon = 0.0001
         else:
             self.epsilon = epsilon
@@ -65,7 +65,7 @@ class FP:
 
 
 x = sympy.Symbol('x')
-obj = FP((x ** 2 - 3) / 2, 4, None, None)
+obj = FP((0.95 * x ** 3 - 5.9 * x ** 2 + 10.9 * x - 6), 3.5, 0, 0)
 
 Result = obj.solve()
 print(Result[0])

@@ -6,16 +6,16 @@ import timeit
 class NR:
     def __init__(self, fn, xi, max_iterations, epsilon):
         self.iterations = []
-        self.ea = 0
-        self.xr = 0
+        self.ea = float(0)
+        self.xr = float(0)
         self.number_of_iterations = 0
-        self.xi = xi
+        self.xi = float(xi)
         self.fn = fn
-        if max_iterations is None:
+        if max_iterations == 0:
             self.max_iterations = 50
         else:
             self.max_iterations = max_iterations
-        if epsilon is None:
+        if epsilon == 0:
             self.epsilon = 0.0001
         else:
             self.epsilon = epsilon
@@ -59,9 +59,8 @@ class NR:
 
         return self.number_of_iterations, execution_time, self.iterations, self.xr, self.ea
 
-
 x = sympy.Symbol('x')
-obj = NR((x ** 3 - 7 * x ** 2 + 8 * x - 3), 5, None, None)
+obj = NR((x ** 3 - 7 * x ** 2 + 8 * x - 3), 5, 0 ,0)
 
 Result = obj.solve()
 print(Result[0])

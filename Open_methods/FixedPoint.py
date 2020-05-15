@@ -34,6 +34,7 @@ class FP:
 
         try:
             diff = sympy.diff(eqn, X)
+            eqn=sympy.Add(X,eqn)
             value_eqn = sympy.lambdify(X, eqn)
             value_diff = sympy.lambdify(X, diff)
         except ValueError:
@@ -71,7 +72,7 @@ class FP:
 x = sympy.Symbol('x')
 #obj = FP(((2*x+3)**(1/2)), 4, 0, 0)
 #obj = FP((3/(x-2)), 4, 0, 0)
-obj = FP(((x**2-3)/2), 4, 0, 0)
+obj = FP(x**2-x, -1, 0, 0)
 
 Result = obj.solve()
 print(Result[0])

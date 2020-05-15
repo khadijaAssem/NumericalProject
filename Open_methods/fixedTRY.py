@@ -17,7 +17,6 @@ def solve(equation, approx_root, max_iterations=50, epsilon=0.0001):
         simple_fun = sympy.Add(symbol, simple_fun)
         print(simple_fun)
         function = sympy.lambdify(symbol, simple_fun)
-        print(function(2))
     except ValueError:
         raise ValueError("Not a valid function")
 
@@ -40,5 +39,5 @@ def solve(equation, approx_root, max_iterations=50, epsilon=0.0001):
 
 
     return number_iterations, execution_time, iterations, approx_root, error, function
-number_iterations, execution_time, iterations, approx_root, error, function = solve(x**2 - 2*x - 3, 0, 50, 0.0001)
+number_iterations, execution_time, iterations, approx_root, error, function = solve(x**2-x, -1, 50, 0.0001)
 print(approx_root)

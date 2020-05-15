@@ -1,12 +1,14 @@
 from tkinter import *
 from tkinter import ttk, filedialog
 import numpy as np
+import tabulate
 from PIL import ImageTk, Image
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from Open_methods import FixedPoint, NewtonRaphson, Secant
 import Lagrange
 import Newton
+import random
 
 
 class GUI:
@@ -49,41 +51,45 @@ class GUI:
             ("Newton Raphson", 4),
             ("Secant", 5),
         ]
-        i = 0
+        i = 1
         self.v.set(4)
+        # ct = [100,50,70]
+        # #brightness = int(round(0.299 * ct[0] + 0.587 * ct[1] + 0.114 * ct[2]))
+        # ct_hex = "%02x%02x%02x" % tuple(ct)
+        # bg_colour = '#' + "".join(ct_hex)
         for text, mode in MODES:
-            b = Radiobutton(self.part1, text=text,
-                            variable=self.v, value=mode, indicatoron=False,
-                            command=lambda: GUI.clicked(self, self.v.get())).grid(column=i, row=0, padx=10, pady=10)
             i += 1
+            Radiobutton(self.part1, text=text,
+                        variable=self.v, value=mode,
+                        command=lambda: GUI.clicked(self, self.v.get()),
+                        fg="black", bg="cadet blue", font="Times 14", indicatoron=False).place(x=20,
+                                                                                               y=50 * i)
+
+            # .grid(column=0, row=i, padx=5, pady=5)
 
     def clicked(self, value):
-        fxlabel = Label(self.part1, text="F(x)")
-        gxlabel = Label(self.part1, text="g(x)")
-        xilabel = Label(self.part1, text="Initial Approximation")
-        xprevlabel = Label(self.part1, text="Previous Approximation")
-        iterlabel = Label(self.part1, text="max iterations")
-        epsilonlabel = Label(self.part1, text="epsilon")
+        fxlabel = Label(self.part1, text="F(x)", font="Times 11")
+        gxlabel = Label(self.part1, text="g(x)", font="Times 11")
+        xilabel = Label(self.part1, text="Initial Approximation", font="Times 11").place(x=175, y=150)
+        xprevlabel = Label(self.part1, text="Previous Approximation", font="Times 11").place(x=175, y=200)
+        iterlabel = Label(self.part1, text="max iterations", font="Times 11").place(x=175, y=250)
+        epsilonlabel = Label(self.part1, text="epsilon", font="Times 11").place(x=175, y=300)
 
-        self.fEntry = Entry(self.part1, width=30)
-        self.xiEntry = Entry(self.part1, width=30)
-        self.xprevEntry = Entry(self.part1, width=30)
-        self.iterEntry = Entry(self.part1, width=30)
-        self.epsilonEntry = Entry(self.part1, width=30)
+        self.func = StringVar()
+        self.xi = DoubleVar()
+        self.xprev = DoubleVar()
+        self.maxiter = IntVar()
+        self.maxiter.set(0)
+        self.epsilon = DoubleVar()
+        self.epsilon.set(0)
+        Entry1 = Entry(self.part1, width=30, textvariable=self.func).place(x=320, y=100)
+        xiEntry = Entry(self.part1, width=30, textvariable=self.xi).place(x=320, y=150)
+        xprevEntry = Entry(self.part1, width=30, textvariable=self.xprev)
+        xprevEntry.place(x=320, y=200)
+        iterEntry = Entry(self.part1, width=30, textvariable=self.maxiter).place(x=320, y=250)
+        epsilonEntry = Entry(self.part1, width=30, textvariable=self.epsilon).place(x=320, y=300)
 
-        button = Button(self.part1, width=10, height=1, text="Solve", command=self.solveP2)
-        button.grid(column=2, row=7, padx=20, pady=20)
-
-        xprevlabel.grid(column=0, row=3, padx=10, pady=10)
-        xilabel.grid(column=0, row=4, padx=10, pady=10)
-        iterlabel.grid(column=0, row=5, padx=10, pady=10)
-        epsilonlabel.grid(column=0, row=6, padx=10, pady=10)
-
-        self.fEntry.grid(column=1, row=2, padx=10, pady=10)
-        self.xprevEntry.grid(column=1, row=3, padx=10, pady=10)
-        self.xiEntry.grid(column=1, row=4, padx=10, pady=10)
-        self.iterEntry.grid(column=1, row=5, padx=10, pady=10)
-        self.epsilonEntry.grid(column=1, row=6, padx=10, pady=10)
+        button = Button(self.part1, width=10, height=1, text="Solve", command=self.solveP2, bg="cadet blue", font="Times 13").place(x=450, y=350)
 
         if self.v.get() == 1:
             print(1)
@@ -91,22 +97,23 @@ class GUI:
             print(2)
         elif self.v.get() == 3:
             fxlabel.config(DISABLED)
-            self.xprevEntry.config(state='disabled')
-            gxlabel.grid(column=0, row=2, padx=10, pady=10)
+            xprevEntry.config(state='disabled')
+            gxlabel.place(x=175, y=100)
         elif self.v.get() == 4:
             gxlabel.config(DISABLED)
-            self.xprevEntry.config(state='disabled')
-            fxlabel.grid(column=0, row=2, padx=10, pady=10)
+            xprevEntry.config(state='disabled')
+            fxlabel.place(x=175, y=100)
         elif self.v.get() == 5:
             gxlabel.config(DISABLED)
-            self.xprevEntry.config(state='normal')
-            fxlabel.grid(column=0, row=2, padx=10, pady=10)
+            xprevEntry.config(state='normal')
+            fxlabel.place(x=175, y=100)
 
     def readInput(self, entry):
         self.polynomiaOrder = int(entry.widget.get())
-        columnLabel = 0;
-        columnX = 1;
+        columnLabel = 0
+        columnX = 1
         columnY = 2
+
         row = 1
         self.entryX = [None] * (self.polynomiaOrder)
         self.entryY = [None] * (self.polynomiaOrder)
@@ -183,7 +190,6 @@ class GUI:
         self.plot(X, l, n, method, window)
 
     def plot(self, X, l, n, method, window):
-
         values_y = []
         values_x = np.linspace(X[0], X[len(X) - 1], 10000)
         for i in range(len(values_x)):
@@ -222,50 +228,76 @@ class GUI:
         self.plot(X, l, n, method, window)
 
     def solveP2(self):
-        window = Toplevel(root)
-        window.title("Root Finder")
-        window.geometry('500x500')
-        iter = False
-        eps = False
-        if self.iterEntry.index("end") == 0:
-            iter = True
-        if self.epsilonEntry.index("end") == 0:
-            eps = True
+        self.windowp2 = Toplevel(root)
+        self.windowp2.title("Root Finder")
+        self.windowp2.geometry('700x500')
+
         if self.v.get() == 3:
-            method = "Fixed Point"
-            if iter and eps:
-                F = FixedPoint.FP(self.fEntry, self.xiEntry, None, None)
-            elif iter:
-                F = FixedPoint.FP(self.fEntry, self.xiEntry, None, self.epsilonEntry)
-            elif eps:
-                F = FixedPoint.FP(self.fEntry, self.xiEntry, self.iterEntry, None)
-            else:
-                F = FixedPoint.FP(self.fEntry, self.xiEntry, self.iterEntry, self.epsilonEntry)
-            F.solve()
-
+            F = FixedPoint.FP(self.func.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
+            self.max = 3
+            self.Result = F.solve()
         elif self.v.get() == 4:
-            method = "Newton Raphson"
-            if iter and eps:
-                N = NewtonRaphson.NR(self.fEntry, self.xiEntry, None, None)
-            elif iter:
-                N = NewtonRaphson.NR(self.fEntry, self.xiEntry, None, self.epsilonEntry)
-            elif eps:
-                N = NewtonRaphson.NR(self.fEntry, self.xiEntry, self.iterEntry, None)
-            else:
-                N = NewtonRaphson.NR(self.fEntry, self.xiEntry, self.iterEntry, self.epsilonEntry)
-            N.solve()
-
+            N = NewtonRaphson.NR(self.func.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
+            self.max = 3
+            self.Result = N.solve()
         elif self.v.get() == 5:
-            method = "Secant"
-            if iter and eps:
-                S = Secant.SC(self.fEntry, self.xprevEntry, self.xiEntry, None, None)
-            elif iter:
-                S = Secant.SC(self.fEntry, self.xprevEntry, self.xiEntry, None, self.epsilonEntry)
-            elif eps:
-                S = Secant.SC(self.fEntry, self.xprevEntry, self.xiEntry, self.iterEntry, None)
-            else:
-                S = Secant.SC(self.fEntry, self.xprevEntry, self.xiEntry, self.iterEntry, self.epsilonEntry)
-            S.solve()
+            S = Secant.SC(self.func.get(), self.xprev.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
+            self.max = 4
+            self.Result = S.solve()
+        GUI.tableP2(self)
+
+    def tableP2(self):
+        number_of_iterations = self.Result[0]
+        execution_time = self.Result[1]
+        iterations = self.Result[2]
+        xr = self.Result[3]
+        ea = self.Result[4]
+
+        if self.max == 3:
+            label = Label(self.windowp2, text="i", bg="black", fg="white", width=10)
+            label.grid(row=0, column=0)
+            label = Label(self.windowp2, text="Current Approximation", bg="black", fg="white", width=30)
+            label.grid(row=0, column=1)
+            label = Label(self.windowp2, text="Approximate Root", bg="black", fg="white", width=30)
+            label.grid(row=0, column=2)
+            label = Label(self.windowp2, text="Error", bg="grey", fg="white", width=30)
+            label.grid(row=0, column=3)
+        if self.max == 4:
+            label = Label(self.windowp2, text="Current Approximation", bg="grey", fg="white", width=10)
+            label.grid(row=0, column=0)
+            label = Label(self.windowp2, text="Previous Approximation", bg="black", fg="white", width=30)
+            label.grid(row=0, column=1)
+            label = Label(self.windowp2, text="Current Approximation", bg="black", fg="white", width=30)
+            label.grid(row=0, column=2)
+            label = Label(self.windowp2, text="Approximate Root", bg="black", fg="white", width=30)
+            label.grid(row=0, column=3)
+            label = Label(self.windowp2, text="Error", bg="grey", fg="white", width=30)
+            label.grid(row=0, column=4)
+
+        column = 0
+        for row in range(len(iterations)):
+            iteration = iterations[row]
+            if self.max == 3:
+                label = Label(self.windowp2, text=row, bg="black", fg="white", width=10)
+                label.grid(row=row+1, column=column)
+                label = Label(self.windowp2, text=iteration['current_approximate'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column+1)
+                label = Label(self.windowp2, text=iteration['approximate_root'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column + 2)
+                label = Label(self.windowp2, text=iteration['error'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column + 3)
+            if self.max == 4:
+                label = Label(self.windowp2, text=row, bg="black", fg="white", width=10)
+                label.grid(row=row + 1, column=column)
+                label = Label(self.windowp2, text=iteration['previous_approximate'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column+1)
+                label = Label(self.windowp2, text=iteration['current_approximate'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column + 2)
+                label = Label(self.windowp2, text=iteration['approximate_root'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column + 3)
+                label = Label(self.windowp2, text=iteration['error'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column + 4)
+
 
 
 root = Tk()

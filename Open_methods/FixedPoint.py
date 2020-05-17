@@ -2,6 +2,8 @@ import sympy
 import numpy
 import timeit
 import math
+import matplotlib.pyplot as plt
+
 
 class FP:
     def __init__(self, gx, xi, max_iterations, epsilon):
@@ -25,16 +27,14 @@ class FP:
 
         try:
             eqn = sympy.simplify(self.gx)
+            if len(eqn.free_symbols) != 1:
+                raise ValueError("Error! Invalid function.")
+            X = eqn.free_symbols.pop()
         except ValueError:
             raise ValueError("Error! Invalid function.")
 
-        if len(eqn.free_symbols) != 1:
-            raise ValueError("Error! Invalid function.")
-        X = eqn.free_symbols.pop()
-
         try:
             diff = sympy.diff(eqn, X)
-            eqn=sympy.Add(X,eqn)
             value_eqn = sympy.lambdify(X, eqn)
             value_diff = sympy.lambdify(X, diff)
         except ValueError:
@@ -66,13 +66,33 @@ class FP:
 
         execution_time = timeit.default_timer() - start_time
 
-        return self.number_of_iterations, execution_time, self.iterations, self.xr, self.ea
+        return self.number_of_iterations, execution_time, self.iterations, self.xr, self.ea , value_eqn
+
+    def draw_plot(self, iterations, value_eqn):
+        iteration = iterations[0]
+        xi = iteration['current_approximate']
+        xr = iteration['approximate_root']
+        diff = max(xi, xr) - min(xi, xr)
+        start = min(xi, xr) - 0.25 * 10 * diff
+        end = max(xi, xr) + 0.25 * 10 * diff
+        if diff == 0:
+            start = -10
+            end = 10
+        xpts = numpy.linspace(start, end, 100)
+
+        plt.plot(xpts, value_eqn(xpts), label='g(x)', color='b')
+        plt.axhline(y=0, color='k')
+        plt.axvline(x=0, color='k')
+        plt.plot([xi, xi], [0, value_eqn(xi)], color='y', label='Xi')
+        plt.plot([xr, xr], [0, value_eqn(xr)], color='r', label='Xi+1')
+        plt.legend()
+        plt.show()
 
 
 x = sympy.Symbol('x')
-#obj = FP(((2*x+3)**(1/2)), 4, 0, 0)
-#obj = FP((3/(x-2)), 4, 0, 0)
-obj = FP(x**2-x, -1, 0, 0)
+# obj = FP(((2*x+3)**(1/2)), 4, 0, 0)
+# obj = FP((3/(x-2)), 4, 0, 0)
+obj = FP((1 + (1/x)), 2, 0, 0)
 
 Result = obj.solve()
 print(Result[0])
@@ -80,3 +100,5 @@ print(Result[1])
 print(*Result[2], sep=", ")
 print(Result[3])
 print(Result[4])
+
+

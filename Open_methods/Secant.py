@@ -1,3 +1,5 @@
+from tkinter import messagebox
+
 import sympy
 import numpy
 import timeit
@@ -28,6 +30,7 @@ class SC:
         try:
             eqn = sympy.simplify(self.fn)
         except ValueError:
+            messagebox.showerror("Oops!", "Error! Invalid function.")
             raise ValueError("Error! Invalid function.")
 
         if len(eqn.free_symbols) != 1:
@@ -39,10 +42,12 @@ class SC:
             value_eqn = sympy.lambdify(X, eqn)
             value_diff = sympy.lambdify(X, diff)
         except ValueError:
+            messagebox.showerror("Oops!", "Error! Invalid function.")
             raise ValueError("Error! Invalid function.")
 
         while True:
             if value_eqn(self.x_prev) - value_eqn(self.xi) == 0:
+                messagebox.showerror("Oops!", "Pitfall,Division by Zero.")
                 raise ValueError("Oops! Pitfall,Division by Zero.")
 
             self.xr = self.xi - (

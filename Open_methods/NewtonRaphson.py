@@ -1,3 +1,5 @@
+from tkinter import messagebox
+
 import sympy
 import numpy
 import math
@@ -28,9 +30,11 @@ class NR:
         try:
             eqn = sympy.simplify(self.fn)
         except ValueError:
+            messagebox.showerror("Oops!", "Error! Invalid function.")
             raise ValueError("Error! Invalid function.")
 
         if len(eqn.free_symbols) != 1:
+            messagebox.showerror("Oops!", "Error! Invalid function.")
             raise ValueError("Error! Invalid function.")
         X = eqn.free_symbols.pop()
 
@@ -39,11 +43,13 @@ class NR:
             value_eqn = sympy.lambdify(X, eqn)
             value_diff = sympy.lambdify(X, diff)
         except ValueError:
+            messagebox.showerror("Oops!", "Error! Invalid function.")
             raise ValueError("Error! Invalid function.")
 
         while True:
             if value_diff(self.xi) == 0:
-                raise ValueError("Oops! Pitfall,Division by Zero.")
+                messagebox.showerror("Oops!", "Pitfall, Division by Zero.")
+                raise ValueError("Oops! Pitfall, Division by Zero.")
             self.xr = self.xi - (value_eqn(self.xi) / value_diff(self.xi))
             self.ea = abs((self.xr - self.xi) / self.xr) * 100
             iteration = numpy.array((self.xi, self.xr, self.ea),

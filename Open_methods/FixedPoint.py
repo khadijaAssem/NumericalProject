@@ -1,3 +1,5 @@
+from tkinter import messagebox
+
 import sympy
 import numpy
 import timeit
@@ -28,9 +30,11 @@ class FP:
         try:
             eqn = sympy.simplify(self.gx)
             if len(eqn.free_symbols) != 1:
+                messagebox.showerror("Oops!", "Error! Invalid function.")
                 raise ValueError("Error! Invalid function.")
             X = eqn.free_symbols.pop()
         except ValueError:
+            messagebox.showerror("Oops!", "Error! Invalid function.")
             raise ValueError("Error! Invalid function.")
 
         try:
@@ -38,6 +42,7 @@ class FP:
             value_eqn = sympy.lambdify(X, eqn)
             value_diff = sympy.lambdify(X, diff)
         except ValueError:
+            messagebox.showerror("Oops!", "Error! Invalid function.")
             raise ValueError("Error! Invalid function.")
 
         count = 0
@@ -46,7 +51,8 @@ class FP:
         while True:
             if first and value_diff(self.xi) > 1:
                 first = False
-                raise ValueError("Oops! Error increase. So, it will diverge.")
+                messagebox.showerror("Oops!", "Error increases. So, it will diverge.")
+                raise ValueError("Oops! Error increases. So, it will diverge.")
             self.xr = value_eqn(self.xi)
             ea_prev = self.ea
             self.ea = abs((self.xr - self.xi) / self.xr) * 100

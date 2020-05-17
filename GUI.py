@@ -6,6 +6,7 @@ from PIL import ImageTk, Image
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from Open_methods import FixedPoint, NewtonRaphson, Secant
+from Bracketing_method import Bisection, FalsePosition
 import Lagrange
 import Newton
 import random
@@ -69,43 +70,85 @@ class GUI:
     def clicked(self, value):
         fxlabel = Label(self.part1, text="F(x)", font="Times 11")
         gxlabel = Label(self.part1, text="g(x)", font="Times 11")
-        xilabel = Label(self.part1, text="Initial Approximation", font="Times 11").place(x=175, y=150)
-        xprevlabel = Label(self.part1, text="Previous Approximation", font="Times 11").place(x=175, y=200)
+        xllabel = Label(self.part1, text="Lower Guess          ", font="Times 11")#.place(x=175, y=150)
+        xulabel = Label(self.part1, text="Upper Guess                          ", font="Times 11")#.place(x=175, y=200)
+        xilabel = Label(self.part1, text="Initial Approximation", font="Times 11")#.place(x=175, y=150)
+        xprevlabel = Label(self.part1, text="Previous Approximation", font="Times 11")#.place(x=175, y=200)
         iterlabel = Label(self.part1, text="max iterations", font="Times 11").place(x=175, y=250)
         epsilonlabel = Label(self.part1, text="epsilon", font="Times 11").place(x=175, y=300)
 
         self.func = StringVar()
         self.xi = DoubleVar()
+        self.xl = DoubleVar()
+        self.xu = DoubleVar()
         self.xprev = DoubleVar()
         self.maxiter = IntVar()
         self.maxiter.set(0)
         self.epsilon = DoubleVar()
         self.epsilon.set(0)
         Entry1 = Entry(self.part1, width=30, textvariable=self.func).place(x=320, y=100)
-        xiEntry = Entry(self.part1, width=30, textvariable=self.xi).place(x=320, y=150)
+        xiEntry = Entry(self.part1, width=30, textvariable=self.xi)#.place(x=320, y=150)
+        xlEntry = Entry(self.part1, width=30, textvariable=self.xl)#.place(x=320, y=150)
+        xuEntry = Entry(self.part1, width=30, textvariable=self.xu)#.place(x=320, y=150)
         xprevEntry = Entry(self.part1, width=30, textvariable=self.xprev)
-        xprevEntry.place(x=320, y=200)
+        #xprevEntry.place(x=320, y=200)
         iterEntry = Entry(self.part1, width=30, textvariable=self.maxiter).place(x=320, y=250)
         epsilonEntry = Entry(self.part1, width=30, textvariable=self.epsilon).place(x=320, y=300)
 
         button = Button(self.part1, width=10, height=1, text="Solve", command=self.solveP2, bg="cadet blue", font="Times 13").place(x=450, y=350)
 
         if self.v.get() == 1:
-            print(1)
+            gxlabel.config(DISABLED)
+            xilabel.config(DISABLED)
+            xprevlabel.config(DISABLED)
+            fxlabel.place(x=175, y=100)
+            xllabel.place(x=175, y=150)
+            xulabel.place(x=175, y=200)
+            xlEntry.place(x=320, y=150)
+            xuEntry.place(x=320, y=200)
         elif self.v.get() == 2:
-            print(2)
+            gxlabel.config(DISABLED)
+            xilabel.config(DISABLED)
+            xprevlabel.config(DISABLED)
+            fxlabel.place(x=175, y=100)
+            xllabel.place(x=175, y=150)
+            xulabel.place(x=175, y=200)
+            xlEntry.place(x=320, y=150)
+            xuEntry.place(x=320, y=200)
         elif self.v.get() == 3:
             fxlabel.config(DISABLED)
-            xprevEntry.config(state='disabled')
+            xulabel.config(DISABLED)
+            xllabel.config(DISABLED)
             gxlabel.place(x=175, y=100)
+            xilabel.place(x=175, y=150)
+            xprevlabel.place(x=175, y=200)
+            xiEntry.place(x=320, y=150)
+            xprevEntry.place(x=320, y=200)
+            xprevEntry.config(state='disabled')
+
         elif self.v.get() == 4:
             gxlabel.config(DISABLED)
-            xprevEntry.config(state='disabled')
+            xulabel.config(DISABLED)
+            xllabel.config(DISABLED)
             fxlabel.place(x=175, y=100)
+            xilabel.place(x=175, y=150)
+            xprevlabel.place(x=175, y=200)
+            xiEntry.place(x=320, y=150)
+            xprevEntry.place(x=320, y=200)
+            xprevEntry.config(state='disabled')
+
         elif self.v.get() == 5:
             gxlabel.config(DISABLED)
-            xprevEntry.config(state='normal')
+            xulabel.config(DISABLED)
+            xllabel.config(DISABLED)
             fxlabel.place(x=175, y=100)
+            xilabel.place(x=175, y=150)
+            xprevlabel.place(x=175, y=200)
+            xiEntry.place(x=320, y=150)
+            xprevEntry.place(x=320, y=200)
+            xprevEntry.config(state='normal')
+
+
 
     def readInput(self, entry):
         self.polynomiaOrder = int(entry.widget.get())
@@ -233,7 +276,15 @@ class GUI:
         self.windowp2.title("Root Finder")
         self.windowp2.geometry('1200x600')
 
-        if self.v.get() == 3:
+        if self.v.get() == 1:
+            B = Bisection.BI(self.func.get(), self.xl.get(), self.xu.get(), self.maxiter.get(), self.epsilon.get())
+            self.max = 1
+            self.Result = B.solve()
+        elif self.v.get() == 2:
+            FP = FalsePosition.FP(self.func.get(), self.xl.get(), self.xu.get(), self.maxiter.get(), self.epsilon.get())
+            self.max = 1
+            self.Result = FP.solve()
+        elif self.v.get() == 3:
             F = FixedPoint.FP(self.func.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
             self.max = 3
             self.Result = F.solve()
@@ -281,6 +332,17 @@ class GUI:
             label.grid(row=0, column=3)
             label = Label(self.windowp2, text="Error", bg="grey", fg="white", width=30)
             label.grid(row=0, column=4)
+        if self.max == 1:
+            label = Label(self.windowp2, text="i", bg="grey", fg="white", width=10)
+            label.grid(row=0, column=0)
+            label = Label(self.windowp2, text="Lower Guess", bg="black", fg="white", width=30)
+            label.grid(row=0, column=1)
+            label = Label(self.windowp2, text="Upper Guess", bg="black", fg="white", width=30)
+            label.grid(row=0, column=2)
+            label = Label(self.windowp2, text="Approximate Root", bg="black", fg="white", width=30)
+            label.grid(row=0, column=3)
+            label = Label(self.windowp2, text="Error", bg="grey", fg="white", width=30)
+            label.grid(row=0, column=4)
 
         column = 0
         for row in range(len(iterations)):
@@ -305,12 +367,25 @@ class GUI:
                 label.grid(row=row+1, column=column + 3)
                 label = Label(self.windowp2, text=iteration['error'], bg="white", fg="black", width=30)
                 label.grid(row=row+1, column=column + 4)
+            if self.max == 1:
+                label = Label(self.windowp2, text=row, bg="black", fg="white", width=10)
+                label.grid(row=row + 1, column=column)
+                label = Label(self.windowp2, text=iteration['xl'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column+1)
+                label = Label(self.windowp2, text=iteration['xu'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column + 2)
+                label = Label(self.windowp2, text=iteration['xr'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column + 3)
+                label = Label(self.windowp2, text=iteration['err'], bg="white", fg="black", width=30)
+                label.grid(row=row+1, column=column + 4)
 
     def plotP2(self):
         if self.v.get() == 1:
-             print(1)
+            B = Bisection.BI(self.func.get(), self.xl.get(), self.xu.get(), self.maxiter.get(), self.epsilon.get())
+            B.draw_plot(self.Result[2], self.Result[5])
         elif self.v.get() == 2:
-            print(2)
+            FP = FalsePosition.FP(self.func.get(), self.xl.get(), self.xu.get(), self.maxiter.get(), self.epsilon.get())
+            FP.draw_plot(self.Result[2], self.Result[5])
         elif self.v.get() == 3:
             F = FixedPoint.FP(self.func.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
             F.draw_plot(self.Result[2], self.Result[5])

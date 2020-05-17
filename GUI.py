@@ -272,10 +272,6 @@ class GUI:
         self.plot(X, l, n, method, window)
 
     def solveP2(self):
-        self.windowp2 = Toplevel(root)
-        self.windowp2.title("Root Finder")
-        self.windowp2.geometry('1200x600')
-
         if self.v.get() == 1:
             B = Bisection.BI(self.func.get(), self.xl.get(), self.xu.get(), self.maxiter.get(), self.epsilon.get())
             self.max = 1
@@ -296,6 +292,10 @@ class GUI:
             S = Secant.SC(self.func.get(), self.xprev.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
             self.max = 4
             self.Result = S.solve()
+
+        self.windowp2 = Toplevel(root)
+        self.windowp2.title("Root Finder")
+        self.windowp2.geometry('1200x600')
         GUI.tableP2(self)
 
     def tableP2(self):

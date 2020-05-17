@@ -212,6 +212,8 @@ class GUI:
         solveLabel = Label(window, text=("Output at X = " + str(x))).grid(row=1, column=1)
         l = None
         n = None
+
+        x = float((self.solve_for_x_entry).get())
         if self.var.get() == 2:
             method = "Lagrange"
             l = Lagrange.Lagrange(X, Y, x)

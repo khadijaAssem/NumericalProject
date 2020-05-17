@@ -65,7 +65,6 @@ class GUI:
                         fg="black", bg="cadet blue", font="Times 14", indicatoron=False).place(x=20,
                                                                                                y=50 * i)
 
-            # .grid(column=0, row=i, padx=5, pady=5)
 
     def clicked(self, value):
         fxlabel = Label(self.part1, text="F(x)", font="Times 11")
@@ -230,7 +229,7 @@ class GUI:
     def solveP2(self):
         self.windowp2 = Toplevel(root)
         self.windowp2.title("Root Finder")
-        self.windowp2.geometry('700x500')
+        self.windowp2.geometry('1200x600')
 
         if self.v.get() == 3:
             F = FixedPoint.FP(self.func.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
@@ -253,6 +252,13 @@ class GUI:
         xr = self.Result[3]
         ea = self.Result[4]
 
+        button = Button(self.windowp2, width=10, height=1, text="Plot", command=lambda:GUI.plotP2(self), bg="cadet blue", font="Times 13").place(x=950, y=350)
+
+        label = Label(self.windowp2, text="Xr = " + str(xr), bg="cadet blue", fg="black", width=30).place(x=950,y=100)
+        label = Label(self.windowp2, text="Number of iterations = " + str(number_of_iterations), bg="cadet blue", fg="black", width=30).place(x=950,y=150)
+        label = Label(self.windowp2, text="Execution Time = " + str(execution_time), bg="cadet blue", fg="black", width=30).place(x=950,y=200)
+        label = Label(self.windowp2, text="ea = " + str(ea), bg="cadet blue", fg="black", width=30).place(x=950,y=250)
+
         if self.max == 3:
             label = Label(self.windowp2, text="i", bg="black", fg="white", width=10)
             label.grid(row=0, column=0)
@@ -263,7 +269,7 @@ class GUI:
             label = Label(self.windowp2, text="Error", bg="grey", fg="white", width=30)
             label.grid(row=0, column=3)
         if self.max == 4:
-            label = Label(self.windowp2, text="Current Approximation", bg="grey", fg="white", width=10)
+            label = Label(self.windowp2, text="i", bg="grey", fg="white", width=10)
             label.grid(row=0, column=0)
             label = Label(self.windowp2, text="Previous Approximation", bg="black", fg="white", width=30)
             label.grid(row=0, column=1)
@@ -297,6 +303,23 @@ class GUI:
                 label.grid(row=row+1, column=column + 3)
                 label = Label(self.windowp2, text=iteration['error'], bg="white", fg="black", width=30)
                 label.grid(row=row+1, column=column + 4)
+
+    def plotP2(self):
+        if self.v.get() == 1:
+             print(1)
+        elif self.v.get() == 2:
+            print(2)
+        elif self.v.get() == 3:
+            F = FixedPoint.FP(self.func.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
+            F.draw_plot(self.Result[2], self.Result[5])
+        elif self.v.get() == 4:
+            N = NewtonRaphson.NR(self.func.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
+            N.draw_plot(self.Result[2], self.Result[5])
+        elif self.v.get() == 5:
+            S = Secant.SC(self.func.get(), self.xprev.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
+            S.draw_plot(self.Result[2], self.Result[5])
+
+
 
 
 

@@ -231,7 +231,7 @@ class GUI:
 
         canvas = FigureCanvasTkAgg(fig, master=window)
         canvas.draw()
-        canvas.get_tk_widget().grid(row=4,column=3)
+        canvas.get_tk_widget().place(x=100, y=100)
 
     def solve(self):
         X = [None] * (self.polynomiaOrder)
@@ -244,21 +244,25 @@ class GUI:
         window = Toplevel(root)
         window.title("Newton")
         window.geometry('500x500')
-        functionLabel = Label(window, text="Output function ").grid(row=0, column=1)
-        solveLabel = Label(window, text=("Output at X = " + str(x))).grid(row=1, column=1)
+        functionLabel = Label(window, text="Output function ").place(x=10, y=15)
+        solveLabel = Label(window, text=("Output at X = " + str(x) + "  is")).place(x=10, y=50)
         l=None;n=None
         if self.var.get() == 2:
             method="Lagrange"
             l = Lagrange.Lagrange(X, Y, x)
             l.lagrange()
-            outputLabel = Label(window, text=str(l.poly())).grid(row=0, column=3)
-            solveOutput = Label(window, text=(str(l.calc_value(x)))).grid(row=1, column=3)
+            outputLabel = Label(window, text=str(l.poly())).place(x=105, y=15)
+            solveOutput = Label(window, text=(str(l.calc_value(x)))).place(x=125, y=50)
 
         if self.var.get() == 1:
             method="Newton"
             n = Newton.Newton(X, Y, self.polynomiaOrder)
-            outputLabel = Label(window, text=str(n.createFormula())).grid(row=0, column=3)
-            solveOutput = Label(window, text=(str(n.solve(x)))).grid(row=1, column=3)
+            ot = str(n.createFormula())
+            op = str(n.solve(x))
+            print (ot)
+            print(op)
+            outputLabel = Label(window, text=ot).place(x=105, y=15)
+            solveOutput = Label(window, text=op).place(x=125, y=50)
         self.plot(X,l,n,method,window)
 
     def solveP2(self):

@@ -11,12 +11,7 @@ import Lagrange
 import Newton
 import random
 
-
 class GUI:
-    master = None
-    part1 = None
-    part2 = None
-    polynomiaOrder = None
 
     def __init__(self, master):
         self.v = IntVar()
@@ -41,8 +36,7 @@ class GUI:
         self.polyOrderEntry.grid(column=1, row=0, padx=10, pady=10)
         self.polyOrderEntry.bind("<Return>", self.readInput)
         orLabel = Label(self.part2, text="Or").grid(column=3, row=0, padx=10, pady=10)
-        read_button = Button(self.part2, width=20, height=1, text="Read data from file",
-                             command=self.readFromFile).grid(row=0, column=4)
+        read_button = Button(self.part2, width=20, height=1, text="Read data from file", command=self.readFromFile).grid(row=0, column=4)
 
     def buildPart1(self):
         MODES = [
@@ -66,14 +60,14 @@ class GUI:
                         fg="black", bg="cadet blue", font="Times 14", indicatoron=False).place(x=20,
                                                                                                y=50 * i)
 
-
     def clicked(self, value):
         fxlabel = Label(self.part1, text="F(x)", font="Times 11")
         gxlabel = Label(self.part1, text="g(x)", font="Times 11")
-        xllabel = Label(self.part1, text="Lower Guess          ", font="Times 11")#.place(x=175, y=150)
-        xulabel = Label(self.part1, text="Upper Guess                          ", font="Times 11")#.place(x=175, y=200)
-        xilabel = Label(self.part1, text="Initial Approximation", font="Times 11")#.place(x=175, y=150)
-        xprevlabel = Label(self.part1, text="Previous Approximation", font="Times 11")#.place(x=175, y=200)
+        xllabel = Label(self.part1, text="Lower Guess          ", font="Times 11")  # .place(x=175, y=150)
+        xulabel = Label(self.part1, text="Upper Guess                          ",
+                        font="Times 11")  # .place(x=175, y=200)
+        xilabel = Label(self.part1, text="Initial Approximation", font="Times 11")  # .place(x=175, y=150)
+        xprevlabel = Label(self.part1, text="Previous Approximation", font="Times 11")  # .place(x=175, y=200)
         iterlabel = Label(self.part1, text="max iterations", font="Times 11").place(x=175, y=250)
         epsilonlabel = Label(self.part1, text="epsilon", font="Times 11").place(x=175, y=300)
 
@@ -87,15 +81,16 @@ class GUI:
         self.epsilon = DoubleVar()
         self.epsilon.set(0)
         Entry1 = Entry(self.part1, width=30, textvariable=self.func).place(x=320, y=100)
-        xiEntry = Entry(self.part1, width=30, textvariable=self.xi)#.place(x=320, y=150)
-        xlEntry = Entry(self.part1, width=30, textvariable=self.xl)#.place(x=320, y=150)
-        xuEntry = Entry(self.part1, width=30, textvariable=self.xu)#.place(x=320, y=150)
+        xiEntry = Entry(self.part1, width=30, textvariable=self.xi)  # .place(x=320, y=150)
+        xlEntry = Entry(self.part1, width=30, textvariable=self.xl)  # .place(x=320, y=150)
+        xuEntry = Entry(self.part1, width=30, textvariable=self.xu)  # .place(x=320, y=150)
         xprevEntry = Entry(self.part1, width=30, textvariable=self.xprev)
-        #xprevEntry.place(x=320, y=200)
+        # xprevEntry.place(x=320, y=200)
         iterEntry = Entry(self.part1, width=30, textvariable=self.maxiter).place(x=320, y=250)
         epsilonEntry = Entry(self.part1, width=30, textvariable=self.epsilon).place(x=320, y=300)
 
-        button = Button(self.part1, width=10, height=1, text="Solve", command=self.solveP2, bg="cadet blue", font="Times 13").place(x=450, y=350)
+        button = Button(self.part1, width=10, height=1, text="Solve", command=self.solveP2, bg="cadet blue",
+                        font="Times 13").place(x=450, y=350)
 
         if self.v.get() == 1:
             gxlabel.config(DISABLED)
@@ -148,20 +143,16 @@ class GUI:
             xprevEntry.place(x=320, y=200)
             xprevEntry.config(state='normal')
 
-
-
     def readInput(self, entry):
         self.polynomiaOrder = int(entry.widget.get())
-        columnLabel = 0
-        columnX = 1
+        columnLabel = 0;
+        columnX = 1;
         columnY = 2
-
         row = 1
         self.entryX = [None] * (self.polynomiaOrder)
         self.entryY = [None] * (self.polynomiaOrder)
         for i in range(1, self.polynomiaOrder + 1):
-            label = Label(self.part2, text=("Point number " + str(i))).grid(column=columnLabel, row=(row + i), padx=10,
-                                                                            pady=10)
+            label = Label(self.part2, text=("Point number " + str(i))).grid(column=columnLabel, row=(row + i), padx=10, pady=10)
             self.entryX[i - 1] = Entry(self.part2, width=10)
             self.entryX[i - 1].grid(column=columnX, row=(row + i), padx=5, pady=5)
 
@@ -169,12 +160,11 @@ class GUI:
             self.entryY[i - 1].grid(column=columnY, row=(row + i), padx=5, pady=5)
 
             if ((i != 0) and (i % 15 == 0)):
-                columnLabel += 3;
-                columnX += 3;
-                columnY += 3
+                columnLabel += 3; columnX += 3; columnY += 3
                 row = 1 - i
 
         self.completePart2(columnY, row + self.polynomiaOrder + 1)
+
 
     def completePart2(self, column, row):
         solve_for_x = Label(self.part2, text="Find value for    ").grid(row=row, column=column - 2)
@@ -185,9 +175,7 @@ class GUI:
         R1 = Radiobutton(self.part2, text="newton", variable=self.var, value=1).grid(row=row + 1, column=column - 1)
         R2 = Radiobutton(self.part2, text="lagrange", variable=self.var, value=2).grid(row=row + 2, column=column - 1)
 
-        solve_button = Button(self.part2, width=10, height=1, text="solve", command=self.solve).grid(column=column,
-                                                                                                     row=row + 2,
-                                                                                                     padx=10, pady=10)
+        solve_button = Button(self.part2, width=10, height=1, text="solve", command=self.solve).grid(column=column, row=row + 2, padx=10, pady=10)
 
     def readFromFile(self):
         X = []
@@ -195,7 +183,6 @@ class GUI:
         T = 0
 
         file_path = filedialog.askopenfilename()
-        # read_from_file(file_path)
 
         f = open(file_path, "r")
         i = 0
@@ -219,7 +206,6 @@ class GUI:
         l = None
         n = None
         if method.__contains__("Lagrange"):
-
             l = Lagrange.Lagrange(X, Y, T)
             l.lagrange()
             outputLabel = Label(window, text=str(l.poly())).grid(row=0, column=3)
@@ -229,47 +215,51 @@ class GUI:
             n = Newton.Newton(X, Y, len(X))
             outputLabel = Label(window, text=str(n.createFormula())).grid(row=0, column=3)
             solveOutput = Label(window, text=(str(n.solve(T)))).grid(row=1, column=3)
-        self.plot(X, l, n, method, window)
+        self.plot(X,l,n,method,window)
 
-    def plot(self, X, l, n, method, window):
+    def plot(self,X,l,n,method,window):
         values_y = []
-        values_x = np.linspace(X[0], X[len(X) - 1], 10000)
+        values_x = np.linspace(X[0], X[len(X)-1], 10000)
         for i in range(len(values_x)):
             if method.__contains__("Lagrange"):
-                values_y.append(l.calc_value(values_x[i]))
+                values_y.append(l.calc_value(values_x[i]) )
             else:
-                values_y.append(n.solve(values_x[i]))
-            # values_x.append(X[0] + step * i)
+                values_y.append(n.solve(values_x[i] ))
+            #values_x.append(X[0] + step * i)
         fig = Figure()
         fig.add_subplot(111).plot(values_x, values_y)
 
         canvas = FigureCanvasTkAgg(fig, master=window)
         canvas.draw()
-        canvas.get_tk_widget().grid(row=4, column=3)
+        canvas.get_tk_widget().grid(row=4,column=3)
 
     def solve(self):
+        X = [None] * (self.polynomiaOrder)
+        Y = [None] * (self.polynomiaOrder)
+        for i in range(1, self.polynomiaOrder + 1):
+            X[i - 1] = float((self.entryX[i - 1]).get())
+            Y[i - 1] = float((self.entryY[i - 1]).get())
+
+        x = float((self.solve_for_x_entry).get())
         window = Toplevel(root)
         window.title("Newton")
         window.geometry('500x500')
         functionLabel = Label(window, text="Output function ").grid(row=0, column=1)
         solveLabel = Label(window, text=("Output at X = " + str(x))).grid(row=1, column=1)
-        l = None
-        n = None
-
-        x = float((self.solve_for_x_entry).get())
+        l=None;n=None
         if self.var.get() == 2:
-            method = "Lagrange"
+            method="Lagrange"
             l = Lagrange.Lagrange(X, Y, x)
             l.lagrange()
             outputLabel = Label(window, text=str(l.poly())).grid(row=0, column=3)
             solveOutput = Label(window, text=(str(l.calc_value(x)))).grid(row=1, column=3)
 
         if self.var.get() == 1:
-            method = "Newton"
+            method="Newton"
             n = Newton.Newton(X, Y, self.polynomiaOrder)
             outputLabel = Label(window, text=str(n.createFormula())).grid(row=0, column=3)
             solveOutput = Label(window, text=(str(n.solve(x)))).grid(row=1, column=3)
-        self.plot(X, l, n, method, window)
+        self.plot(X,l,n,method,window)
 
     def solveP2(self):
         if self.v.get() == 1:
@@ -305,12 +295,15 @@ class GUI:
         xr = self.Result[3]
         ea = self.Result[4]
 
-        button = Button(self.windowp2, width=10, height=1, text="Plot", command=lambda:GUI.plotP2(self), bg="cadet blue", font="Times 13").place(x=950, y=350)
+        button = Button(self.windowp2, width=10, height=1, text="Plot", command=lambda: GUI.plotP2(self),
+                        bg="cadet blue", font="Times 13").place(x=950, y=350)
 
-        label = Label(self.windowp2, text="Xr = " + str(xr), bg="cadet blue", fg="black", width=30).place(x=950,y=100)
-        label = Label(self.windowp2, text="Number of iterations = " + str(number_of_iterations), bg="cadet blue", fg="black", width=30).place(x=950,y=150)
-        label = Label(self.windowp2, text="Execution Time = " + str(execution_time), bg="cadet blue", fg="black", width=30).place(x=950,y=200)
-        label = Label(self.windowp2, text="ea = " + str(ea), bg="cadet blue", fg="black", width=30).place(x=950,y=250)
+        label = Label(self.windowp2, text="Xr = " + str(xr), bg="cadet blue", fg="black", width=30).place(x=950, y=100)
+        label = Label(self.windowp2, text="Number of iterations = " + str(number_of_iterations), bg="cadet blue",
+                      fg="black", width=30).place(x=950, y=150)
+        label = Label(self.windowp2, text="Execution Time = " + str(execution_time), bg="cadet blue", fg="black",
+                      width=30).place(x=950, y=200)
+        label = Label(self.windowp2, text="ea = " + str(ea), bg="cadet blue", fg="black", width=30).place(x=950, y=250)
 
         if self.max == 3:
             label = Label(self.windowp2, text="i", bg="black", fg="white", width=10)
@@ -349,35 +342,35 @@ class GUI:
             iteration = iterations[row]
             if self.max == 3:
                 label = Label(self.windowp2, text=row, bg="black", fg="white", width=10)
-                label.grid(row=row+1, column=column)
+                label.grid(row=row + 1, column=column)
                 label = Label(self.windowp2, text=iteration['current_approximate'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column+1)
+                label.grid(row=row + 1, column=column + 1)
                 label = Label(self.windowp2, text=iteration['approximate_root'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column + 2)
+                label.grid(row=row + 1, column=column + 2)
                 label = Label(self.windowp2, text=iteration['error'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column + 3)
+                label.grid(row=row + 1, column=column + 3)
             if self.max == 4:
                 label = Label(self.windowp2, text=row, bg="black", fg="white", width=10)
                 label.grid(row=row + 1, column=column)
                 label = Label(self.windowp2, text=iteration['previous_approximate'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column+1)
+                label.grid(row=row + 1, column=column + 1)
                 label = Label(self.windowp2, text=iteration['current_approximate'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column + 2)
+                label.grid(row=row + 1, column=column + 2)
                 label = Label(self.windowp2, text=iteration['approximate_root'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column + 3)
+                label.grid(row=row + 1, column=column + 3)
                 label = Label(self.windowp2, text=iteration['error'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column + 4)
+                label.grid(row=row + 1, column=column + 4)
             if self.max == 1:
                 label = Label(self.windowp2, text=row, bg="black", fg="white", width=10)
                 label.grid(row=row + 1, column=column)
                 label = Label(self.windowp2, text=iteration['xl'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column+1)
+                label.grid(row=row + 1, column=column + 1)
                 label = Label(self.windowp2, text=iteration['xu'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column + 2)
+                label.grid(row=row + 1, column=column + 2)
                 label = Label(self.windowp2, text=iteration['xr'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column + 3)
+                label.grid(row=row + 1, column=column + 3)
                 label = Label(self.windowp2, text=iteration['err'], bg="white", fg="black", width=30)
-                label.grid(row=row+1, column=column + 4)
+                label.grid(row=row + 1, column=column + 4)
 
     def plotP2(self):
         if self.v.get() == 1:
@@ -395,10 +388,6 @@ class GUI:
         elif self.v.get() == 5:
             S = Secant.SC(self.func.get(), self.xprev.get(), self.xi.get(), self.maxiter.get(), self.epsilon.get())
             S.draw_plot(self.Result[2], self.Result[5])
-
-
-
-
 
 root = Tk()
 gui = GUI(root)

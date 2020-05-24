@@ -1,4 +1,5 @@
 import  numpy as np
+import matplotlib.pyplot as plt
 
 class Newton :
     DivDeff = None
@@ -32,9 +33,9 @@ class Newton :
                 continue
             funString += str(self.DivDeff[i][i])
             for j in range (0,i):
-                funString += " ( x - "+str(self.X[j])+") "
-            funString += " + "
-        funString = funString[:-2]
+                funString += "(x - "+str(self.X[j])+")"
+            funString += "+"
+        funString = funString[:-1]
         return funString
 
     def printDivDeff(self):
@@ -44,15 +45,28 @@ class Newton :
             print("")
 
     def solve(self,x):
-        print("X is "+str(x))
+        # print("X is "+str(x))
         output = 0.0
         for i in range (0,self.n):
             term = self.DivDeff[i][i]
             for j in range (0,i):
                 term *= (x - self.X[j])
-            print("term is "+str(term))
+            # print("term is "+str(term))
             output += term
         return output
+
+    def plot(self):
+        step = (self.X[0] - self.X[len(self.X) - 1]) / 10000
+        values_x = []
+        values_y = []
+        for i in range(10000 + 3):
+            values_y.append(self.solve(self.X[0] + step * i))
+            values_x.append(self.X[0] + step * i)
+        plt.plot(values_x, values_y)
+        plt.xlabel("x-axis")
+        plt.ylabel("y-axis")
+        plt.title("graph!")
+        plt.show()
 
 n =6;
 Y = [ 7.2,7.1,6.0,5.0,3.5,5.0 ]

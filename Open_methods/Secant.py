@@ -51,8 +51,10 @@ class SC:
                 raise ValueError("Oops! Pitfall,Division by Zero.")
 
             self.xr = self.xi - (
-                        (value_eqn(self.xi) * (self.x_prev - self.xi)) / (value_eqn(self.x_prev) - value_eqn(self.xi)))
-            self.ea = abs((self.xr - self.xi) / self.xr) * 100
+                    (value_eqn(self.xi) * (self.x_prev - self.xi)) / (value_eqn(self.x_prev) - value_eqn(self.xi)))
+
+            if self.xr != 0:
+                self.ea = abs((self.xr - self.xi) / self.xr) * 100
             iteration = numpy.array((self.x_prev, self.xi, self.xr, self.ea),
                                     dtype=[('previous_approximate', numpy.float)
                                         , ('current_approximate', numpy.float)
@@ -106,4 +108,3 @@ number_of_iterations, execution_time, iterations, xr, ea, value_diff = obj.solve
 # print(Result[5])
 
 # 0.95*x**3-5.9*x**2+10.9*x-6, 3.5
-

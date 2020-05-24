@@ -55,7 +55,8 @@ class FP:
                 raise ValueError("Oops! Error increases. So, it will diverge.")
             self.xr = value_eqn(self.xi)
             ea_prev = self.ea
-            self.ea = abs((self.xr - self.xi) / self.xr) * 100
+            if self.xr != 0:
+                self.ea = abs((self.xr - self.xi) / self.xr) * 100
 
             iteration = numpy.array((self.xi, self.xr, self.ea),
                                     dtype=[('current_approximate', numpy.float),

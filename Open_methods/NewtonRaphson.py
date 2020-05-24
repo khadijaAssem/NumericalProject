@@ -51,7 +51,8 @@ class NR:
                 messagebox.showerror("Oops!", "Pitfall, Division by Zero.")
                 raise ValueError("Oops! Pitfall, Division by Zero.")
             self.xr = self.xi - (value_eqn(self.xi) / value_diff(self.xi))
-            self.ea = abs((self.xr - self.xi) / self.xr) * 100
+            if self.xr != 0:
+                self.ea = abs((self.xr - self.xi) / self.xr) * 100
             iteration = numpy.array((self.xi, self.xr, self.ea),
                                     dtype=[('current_approximate', numpy.float),
                                            ('approximate_root', numpy.float),
